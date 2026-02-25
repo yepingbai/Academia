@@ -4,17 +4,17 @@
   <img src="https://img.shields.io/badge/Electron-28.0.0-47848F?logo=electron" alt="Electron">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
   <img src="https://img.shields.io/badge/Platform-macOS%20%7C%20Windows%20%7C%20Linux-blue" alt="Platform">
-  <img src="https://img.shields.io/github/stars/YOUR_USERNAME/Academia?style=social" alt="GitHub Stars">
+  <img src="https://img.shields.io/github/stars/yepingbai/Academia?style=social" alt="GitHub Stars">
 </p>
 
 <p align="center">
-  <img src="https://github.com/YOUR_USERNAME/Academia/actions/workflows/ci.yml/badge.svg" alt="CI">
-  <img src="https://img.shields.io/codecov/c/github/YOUR_USERNAME/Academia" alt="Coverage">
+  <img src="https://github.com/MACHINE/Academia/actions/workflows/ci.yml/badge.svg" alt="CI">
+  <img src="https://img.shields.io/codecov/c/github/yepingbai/Academia" alt="Coverage">
 </p>
 
 <!-- 
   📌 使用前请替换:
-  - YOUR_USERNAME → 你的 GitHub 用户名
+  - yepingbai → 你的 GitHub 用户名
   - Academia → 你的仓库名（如果不同）
 -->
 
@@ -204,15 +204,15 @@ npm run ci:local:all
 
 <!-- 
   📌 使用前请替换:
-  - YOUR_USERNAME → 你的 GitHub 用户名
+  - yepingbai → 你的 GitHub 用户名
   - Academia → 你的仓库名（如果不同）
 -->
 
-<a href="https://star-history.com/#YOUR_USERNAME/Academia&Date">
+<a href="https://star-history.com/#yepingbai/Academia&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=YOUR_USERNAME/Academia&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=YOUR_USERNAME/Academia&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=YOUR_USERNAME/Academia&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=yepingbai/Academia&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=yepingbai/Academia&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=yepingbai/Academia&type=Date" />
  </picture>
 </a>
 
