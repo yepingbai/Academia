@@ -16,6 +16,13 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
+        include:
+          - os: macos-latest
+            build_command: npx electron-builder --mac --arm64
+          - os: ubuntu-latest
+            build_command: npm run build:linux
+          - os: windows-latest
+            build_command: npm run build:win
 
     steps:
       - name: Checkout code
@@ -34,7 +41,7 @@ jobs:
         run: npm test
 
       - name: Build and publish
-        run: npm run build
+        run: ${{ matrix.build_command }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_LINK: ${{ secrets.CSC_LINK }}

@@ -68,7 +68,7 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
         include:
           - os: macos-latest
-            build_command: npm run build:mac
+            build_command: npx electron-builder --mac --arm64
             artifact_name: academia-mac
             artifact_path: dist/*.dmg
           - os: ubuntu-latest
