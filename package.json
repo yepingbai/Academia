@@ -28,24 +28,16 @@
       "output": "dist"
     },
     "files": [
-      "**/*",
-      "!tests/**",
-      "!coverage/**",
-      "!scripts/**",
-      "!*.md",
-      "!.eslintrc.js",
-      "!jest.config.js",
-      "!.gitignore",
-      "!.github/**"
+      {
+        "from": "src",
+        "to": "src",
+        "filter": ["**/*"]
+      },
+      "package.json"
     ],
     "mac": {
       "category": "public.app-category.productivity",
-      "target": [
-        {
-          "target": "dmg",
-          "arch": ["x64", "arm64"]
-        }
-      ]
+      "target": "dmg"
     },
     "win": {
       "target": "nsis"
