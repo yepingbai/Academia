@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-src 'self' file: https:; img-src 'self' https: data:">
+  <title>Academia - 知识管理</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <!-- 引入 marked.js 用于 Markdown 解析 -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1 class="app-title">📚 Academia</h1>
+      </div>
+      
+      <!-- 导航菜单 -->
+      <nav class="sidebar-nav">
+        <div class="nav-item active" data-view="files">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
+          资源库
+        </div>
+        <div class="nav-item" data-view="tags">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+            <line x1="7" y1="7" x2="7.01" y2="7"></line>
+          </svg>
+          标签管理
+        </div>
+      </nav>
+
+      <!-- 标签树（文件视图时显示） -->
+      <div class="tags-section" id="tagsSidebar">
+        <div class="section-header">
+          <span>按标签筛选</span>
+          <button class="btn-icon" id="addRootTagBtn" title="添加标签">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="tag-tree" id="tagTree">
+          <!-- 标签树将通过JS渲染 -->
+        </div>
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- ========== 资源库视图 ========== -->
+      <div class="view-container" id="filesView">
+        <!-- 顶部工具栏 -->
+        <header class="toolbar">
+          <div class="search-box">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="searchInput" placeholder="搜索文件名、链接、笔记或标签...">
+          </div>
+          <div class="toolbar-actions">
+            <!-- 类型筛选 -->
+            <div class="filter-tabs">
+              <button class="filter-tab active" data-filter="all">全部</button>
+              <button class="filter-tab" data-filter="pdf">PDF</button>
+              <button class="filter-tab" data-filter="file">文件</button>
+              <button class="filter-tab" data-filter="link">链接</button>
+              <button class="filter-tab" data-filter="note">笔记</button>
+            </div>
+            <button class="btn btn-secondary" id="addNoteBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              新建笔记
+            </button>
+            <button class="btn btn-secondary" id="addLinkBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+              </svg>
+              添加链接
+            </button>
+            <button class="btn btn-primary" id="uploadBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              上传文件
+            </button>
+          </div>
+        </header>
+
+        <!-- 资源列表 -->
+        <div class="content-area">
+          <div class="resource-grid" id="resourceGrid">
+            <!-- 资源卡片将通过JS渲染 -->
+          </div>
+          
+          <!-- 空状态 -->
+          <div class="empty-state" id="emptyState">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="12" y1="18" x2="12" y2="12"></line>
+              <line x1="9" y1="15" x2="15" y2="15"></line>
+            </svg>
+            <h3>还没有资源</h3>
+            <p>上传PDF、添加链接或创建笔记来开始管理你的知识库</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== 标签管理视图 ========== -->
+      <div class="view-container hidden" id="tagsView">
+        <header class="toolbar">
+          <h2 class="view-title">标签管理</h2>
+          <div class="toolbar-actions">
+            <button class="btn btn-secondary" id="expandAllBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <polyline points="9 21 3 21 3 15"></polyline>
+                <line x1="21" y1="3" x2="14" y2="10"></line>
+                <line x1="3" y1="21" x2="10" y2="14"></line>
+              </svg>
+              展开全部
+            </button>
+            <button class="btn btn-primary" id="addTagMainBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              新建标签
+            </button>
+          </div>
+        </header>
+
+        <div class="content-area tags-management">
+          <!-- 标签统计 -->
+          <div class="tags-stats">
+            <div class="stat-card">
+              <div class="stat-number" id="totalTagsCount">0</div>
+              <div class="stat-label">总标签数</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="rootTagsCount">0</div>
+              <div class="stat-label">顶级标签</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="maxDepth">0</div>
+              <div class="stat-label">最大层级</div>
+            </div>
+          </div>
+
+          <!-- 标签关系树视图 -->
+          <div class="tag-tree-panel">
+            <div class="panel-header">
+              <h3>标签层级结构</h3>
+              <div class="view-toggle">
+                <button class="toggle-btn active" data-view="tree">树形</button>
+                <button class="toggle-btn" data-view="graph">关系图</button>
+              </div>
+            </div>
+            
+            <!-- 树形视图 -->
+            <div class="tag-hierarchy-tree" id="tagHierarchyTree">
+              <!-- 层级树将通过JS渲染 -->
+            </div>
+
+            <!-- 关系图视图 -->
+            <div class="tag-graph hidden" id="tagGraph">
+              <canvas id="tagGraphCanvas"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 预览面板 -->
+    <div class="preview-panel hidden" id="previewPanel">
+      <div class="preview-header">
+        <div class="preview-title">
+          <span class="preview-icon" id="previewIcon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+          </span>
+          <span id="previewFileName">文件名</span>
+        </div>
+        <div class="preview-actions">
+          <button class="btn-icon hidden" id="editNoteBtn" title="编辑笔记">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </button>
+          <button class="btn-icon" id="openExternalBtn" title="在外部打开">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </button>
+          <button class="btn-icon" id="closePreviewBtn" title="关闭预览">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="preview-content">
+        <iframe id="previewFrame" src=""></iframe>
+        <!-- Markdown 预览容器 -->
+        <div class="markdown-preview hidden" id="markdownPreview"></div>
+      </div>
+      <div class="preview-info">
+        <div class="info-item" id="previewSizeItem">
+          <span class="info-label">大小</span>
+          <span class="info-value" id="previewFileSize">-</span>
+        </div>
+        <div class="info-item" id="previewUrlItem" style="display:none;">
+          <span class="info-label">链接</span>
+          <span class="info-value info-url" id="previewUrl">-</span>
+        </div>
+        <div class="info-item" id="previewUpdatedItem" style="display:none;">
+          <span class="info-label">更新时间</span>
+          <span class="info-value" id="previewUpdatedAt">-</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">添加时间</span>
+          <span class="info-value" id="previewAddedAt">-</span>
+        </div>
+        <div class="info-item tags-info">
+          <span class="info-label">标签</span>
+          <div class="info-tags" id="previewTags"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 标签编辑弹窗 -->
+  <div class="modal" id="tagModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="tagModalTitle">添加标签</h3>
+        <button class="btn-icon modal-close" id="closeTagModal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>标签名称</label>
+          <input type="text" id="tagNameInput" placeholder="输入标签名称">
+        </div>
+        <div class="form-group">
+          <label>父级标签</label>
+          <select id="tagParentSelect" class="form-select">
+            <option value="">无（顶级标签）</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>标签颜色</label>
+          <div class="color-picker">
+            <input type="color" id="tagColorInput" value="#6366f1">
+            <span id="tagColorValue">#6366f1</span>
+          </div>
+          <div class="color-presets">
+            <button class="color-preset" data-color="#6366f1" style="background:#6366f1"></button>
+            <button class="color-preset" data-color="#ec4899" style="background:#ec4899"></button>
+            <button class="color-preset" data-color="#14b8a6" style="background:#14b8a6"></button>
+            <button class="color-preset" data-color="#f59e0b" style="background:#f59e0b"></button>
+            <button class="color-preset" data-color="#ef4444" style="background:#ef4444"></button>
+            <button class="color-preset" data-color="#8b5cf6" style="background:#8b5cf6"></button>
+            <button class="color-preset" data-color="#06b6d4" style="background:#06b6d4"></button>
+            <button class="color-preset" data-color="#84cc16" style="background:#84cc16"></button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelTagBtn">取消</button>
+        <button class="btn btn-primary" id="saveTagBtn">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 资源标签选择弹窗 -->
+  <div class="modal" id="resourceTagModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>管理标签</h3>
+        <button class="btn-icon modal-close" id="closeResourceTagModal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="tag-select-list" id="tagSelectList">
+          <!-- 可选标签列表 -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="saveResourceTagsBtn">完成</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 添加链接弹窗 -->
+  <div class="modal" id="linkModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="linkModalTitle">添加链接</h3>
+        <button class="btn-icon modal-close" id="closeLinkModal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>链接地址 <span class="required">*</span></label>
+          <input type="url" id="linkUrlInput" placeholder="https://example.com">
+        </div>
+        <div class="form-group">
+          <label>标题</label>
+          <input type="text" id="linkTitleInput" placeholder="输入链接标题（可选）">
+        </div>
+        <div class="form-group">
+          <label>描述</label>
+          <textarea id="linkDescInput" placeholder="添加描述（可选）" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelLinkBtn">取消</button>
+        <button class="btn btn-primary" id="saveLinkBtn">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 笔记编辑弹窗 -->
+  <div class="modal" id="noteModal">
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h3 id="noteModalTitle">新建笔记</h3>
+        <button class="btn-icon modal-close" id="closeNoteModal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body note-editor-body">
+        <div class="form-group">
+          <label>标题</label>
+          <input type="text" id="noteTitleInput" placeholder="输入笔记标题">
+        </div>
+        <div class="form-group note-content-group">
+          <div class="note-editor-header">
+            <label>内容 <span class="markdown-hint">支持 Markdown 格式</span></label>
+            <div class="editor-tabs">
+              <button class="editor-tab active" data-tab="write">编辑</button>
+              <button class="editor-tab" data-tab="preview">预览</button>
+            </div>
+          </div>
+          <div class="note-editor-container">
+            <textarea id="noteContentInput" placeholder="使用 Markdown 格式编写笔记...
+
+支持的格式：
+# 标题
+**粗体** *斜体*
+- 列表项
+[链接](url)
+`代码`
+```
+代码块
+```"></textarea>
+            <div class="note-preview-panel hidden" id="notePreviewPanel"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelNoteBtn">取消</button>
+        <button class="btn btn-primary" id="saveNoteBtn">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 文件类型选择弹窗 -->
+  <div class="modal" id="fileTypeModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>选择文件类型</h3>
+        <button class="btn-icon modal-close" id="closeFileTypeModal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="file-type-hint">请选择要上传的文件类型，未来将支持更多格式</p>
+        <div class="file-type-grid" id="fileTypeGrid">
+          <!-- 文件类型选项将通过JS渲染 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 内联 marked.js 作为备份 -->
+  <script>
+    // 简单的 Markdown 解析器（如果 CDN 加载失败使用）
+    if (typeof marked === 'undefined') {
+      window.marked = {
+        parse: function(text) {
+          return text
+            // 代码块
+            .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code class="language-$1">$2</code></pre>')
+            // 行内代码
+            .replace(/`([^`]+)`/g, '<code>$1</code>')
+            // 标题
+            .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+            .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+            .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+            // 粗体和斜体
+            .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.+?)\*/g, '<em>$1</em>')
+            // 链接和图片
+            .replace(/!\[([^\]]*)\]\(([^\)]+)\)/g, '<img alt="$1" src="$2">')
+            .replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+            // 列表
+            .replace(/^\s*[-*+] (.*)$/gim, '<li>$1</li>')
+            .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+            // 引用
+            .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
+            // 水平线
+            .replace(/^---$/gim, '<hr>')
+            // 段落
+            .replace(/\n\n/g, '</p><p>')
+            .replace(/^(.+)$/gim, '<p>$1</p>')
+            // 清理多余标签
+            .replace(/<p><\/p>/g, '')
+            .replace(/<p>(<h[1-6]>)/g, '$1')
+            .replace(/(<\/h[1-6]>)<\/p>/g, '$1')
+            .replace(/<p>(<ul>)/g, '$1')
+            .replace(/(<\/ul>)<\/p>/g, '$1')
+            .replace(/<p>(<pre>)/g, '$1')
+            .replace(/(<\/pre>)<\/p>/g, '$1')
+            .replace(/<p>(<blockquote>)/g, '$1')
+            .replace(/(<\/blockquote>)<\/p>/g, '$1');
+        }
+      };
+    }
+  </script>
+
+  <script src="scripts/app.js"></script>
+</body>
+</html>
