@@ -1,7 +1,7 @@
 {
-  "name": "academia-pdf-manager",
+  "name": "academia",
   "version": "1.0.0",
-  "description": "PDF文件管理器 - 支持标签层级组织",
+  "description": "资源管理器 - 支持标签层级组织",
   "main": "src/main/main.js",
   "scripts": {
     "start": "electron .",
@@ -22,14 +22,21 @@
     "ci:sh:all": "bash scripts/ci-local.sh --all"
   },
   "build": {
-    "appId": "com.academia.pdfmanager",
-    "productName": "Academia PDF Manager",
+    "appId": "com.academia",
+    "productName": "Academia",
     "directories": {
       "output": "dist"
     },
     "files": [
-      "src/**/*",
-      "assets/**/*"
+      "**/*",
+      "!tests/**",
+      "!coverage/**",
+      "!scripts/**",
+      "!*.md",
+      "!.eslintrc.js",
+      "!jest.config.js",
+      "!.gitignore",
+      "!.github/**"
     ],
     "mac": {
       "category": "public.app-category.productivity",
