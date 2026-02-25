@@ -4,19 +4,11 @@
   <img src="https://img.shields.io/badge/Electron-28.0.0-47848F?logo=electron" alt="Electron">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
   <img src="https://img.shields.io/badge/Platform-macOS%20%7C%20Windows%20%7C%20Linux-blue" alt="Platform">
-  <img src="https://img.shields.io/github/stars/yepingbai/Academia?style=social" alt="GitHub Stars">
 </p>
 
 <p align="center">
-  <img src="https://github.com/MACHINE/Academia/actions/workflows/ci.yml/badge.svg" alt="CI">
-  <img src="https://img.shields.io/codecov/c/github/yepingbai/Academia" alt="Coverage">
+  <a href="./README.md">中文</a> | <a href="./README_EN.md">English</a>
 </p>
-
-<!-- 
-  📌 使用前请替换:
-  - yepingbai → 你的 GitHub 用户名
-  - Academia → 你的仓库名（如果不同）
--->
 
 一款优雅的学术资源管理工具，帮助研究人员、学生和知识工作者高效管理 PDF 文献、笔记、链接和各类文件资源。
 
@@ -199,22 +191,6 @@ npm run ci:local:all
 - [ ] 插件系统 - 扩展功能支持
 - [ ] 暗色主题 - Dark Mode 支持
 - [ ] 快捷键 - 键盘操作支持
-
-## ⭐ Star 历史
-
-<!-- 
-  📌 使用前请替换:
-  - yepingbai → 你的 GitHub 用户名
-  - Academia → 你的仓库名（如果不同）
--->
-
-<a href="https://star-history.com/#yepingbai/Academia&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=yepingbai/Academia&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=yepingbai/Academia&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=yepingbai/Academia&type=Date" />
- </picture>
-</a>
 
 ## 🤝 贡献
 
